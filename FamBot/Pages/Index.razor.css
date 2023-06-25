@@ -2,24 +2,27 @@
 
 .chat {
     background-color: #2c668b;
-    max-width: 50em;
-    min-width: 50em;
-    max-height: 35em;
-    min-height: 35em;
+    max-width: 30em;
+    min-width: 30em;
+    max-height: 40em;
+    min-height: 40em;
     padding: 1em;
     border-radius: 10px;
     outline: 1px solid #828282;
     color: #f5a940;
+    overflow-y: scroll;
+    position: absolute;
+    font-size: 18pt;
 }
 
 .chat-container {
-    min-height: max-content;
-    max-height: auto;
-    max-width: fit-content;
-    min-width: stretch;
+    max-height: 40em;
+    min-height: 40em;
     position: relative;
+    overflow: hidden;
+    min-width: 28em;
+    max-width: 28em;
     top: 2em;
-    margin-inline: auto;
     font-family: 'Ubuntu', sans-serif;
 }
 
@@ -34,14 +37,12 @@
     border-radius: 10px;
     color: #C9AB1C;
     padding: .5em;
-    
 }
 
 .user-input-container {
-    position: absolute;
-    bottom: 1em;
+/*    position: absolute;*/
+/*    top: 25em;*/
     display: flex;
-
 }
 
 .send-button {
