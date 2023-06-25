@@ -1,0 +1,28 @@
+﻿.chat {
+    background-color: #003456;
+    max-width: 60em;
+    min-width: 60em;
+    max-height: 35em;
+    min-height: 35em;
+    border-radius: 10px;
+    outline: 1px solid #999;
+}
+
+.chat-container {
+    min-height: max-content;
+    max-height: auto;
+    max-width: fit-content;
+    min-width: stretch;
+    position: relative;
+    top: 2em;
+    margin-inline: auto;
+}
+
+.user-input {
+    min-width: 100%;
+    max-width: auto;
+    min-height: 10em;
+    max-height: 10em;
+    margin-block: 1em;
+    background-color: #233a49;
+}
