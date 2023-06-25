@@ -10,6 +10,7 @@ using DSharpPlus.Interactivity.Extensions;
 using FamBot.CommandModules;
 using DSharpPlus.SlashCommands;
 using Microsoft.AspNetCore.ResponseCompression;
+using FamBot.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,20 +29,26 @@ discord.UseInteractivity(new InteractivityConfiguration()
     Timeout = TimeSpan.FromSeconds(60)
 });
 
-var commands = discord.UseSlashCommands();
-commands.RegisterCommands<Slash>(1055294750095331439);
-
-await discord.ConnectAsync();
 
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
+
+builder.Services.AddTransient<CalendarService>();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
+var commands = discord.UseSlashCommands(new SlashCommandsConfiguration()
+{
+    Services = app.Services
+});
+
+commands.RegisterCommands<Slash>(1055294750095331439);
+
+await discord.ConnectAsync();
 app.UseResponseCompression();
 if (!app.Environment.IsDevelopment())
 {

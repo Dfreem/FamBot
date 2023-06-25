@@ -1,23 +1,50 @@
-﻿//using System;
-//using System.IO;
-//using Ical.Net;
-//using Ical.Net.CalendarComponents;
-//using Ical.Net.DataTypes;
+﻿using System;
+using System.IO;
+using Ical.Net;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net.Serialization;
 
-//namespace FamBot.Data.Services;
+namespace FamBot.Data.Services;
 
-//public class CalendarService
-//{
-//    public Calendar GetCalendar { get; set; }
+public class CalendarService
+{
+    public Calendar GetCalendar { get; set; }
 
-//    public CalendarService()
-//    {
-      
-//        using (Stream sr = )
-//    }
-    
+    public CalendarService()
+    {
+        using (var sr = new StreamReader("Data/freemand@my.lanecc.edu.ics"))
+        {
+            var calendarStream = sr.ReadToEnd();
+            GetCalendar = Calendar.Load(calendarStream);
+        }
+    }
+    public List<CalendarEvent> GetCalendarEventsByDateAsync(IDateTime toGet)
+    {
+        
+        return GetCalendar.Events.Where(e => e.OccursOn(toGet)).ToList();
+    }
 
-//}
+    public async Task<string> AddReminderAsync(Todo newReminder)
+    {
+        GetCalendar.AddChild(newReminder);
+        CalendarSerializer serial = new();
+        string serializedCalendar = serial.SerializeToString(newReminder);
+        await File.AppendAllTextAsync("./freemand@my.lanecc.edu", serializedCalendar);
+        return await Task.FromResult(serializedCalendar);
+    }
+
+    public Task<string> GetThisWeek()
+    {
+        string todoString = string.Empty;
+        IDateTime end = new CalDateTime(DateTime.Now.AddDays(7));
+        var todos = GetCalendar
+            .Todos.AsParallel()
+            .Where(td => td.DtStart.LessThanOrEqual(end));
+        todos.ForAll(t => todoString += t.Description);
+        return Task.FromResult(todoString);
+    }
+}
 
 //BEGIN:VCALENDAR
 //VERSION:2.0
