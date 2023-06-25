@@ -1,3 +1,9 @@
+root {
+    --bg-olive:#3A574E;
+    --bg-ai-blue:#2c668b;
+}
+
+
 .page {
     position: relative;
     display: flex;
@@ -6,7 +12,7 @@
 
 main {
     flex: 1;
-    background-color: #3A574E
+    background-color: #3A574E;
 }
 
 .sidebar {
@@ -14,7 +20,7 @@ main {
 }
 
 .top-row {
-    background-color: Black;
+    background-color: #293C36;
     border-bottom: 1px solid #d6d5d5;
     justify-content: flex-end;
     height: 3.5rem;

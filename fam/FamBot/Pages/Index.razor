@@ -5,31 +5,24 @@
 
 <PageTitle>Debug Output</PageTitle>
 
-
-@*<div class="form-group">
-    <label>
-        User:
-        <input @bind="@userInput" size="50" />
-    </label>
-</div>*@
-
-<hr>
 <div class="chat-container">
     <div class="chat">
 
-        <ul id="messagesList">
+        <div class="list-group" id="messagesList">
             @foreach (var message in messages)
             {
-                <li>@message</li>
+                <div class="list-inline-item">@message</div>
             }
-        </ul>
-    </div>
-    <div class="form-group">
-        <textarea class="user-input" @bind="messageInput">
+        </div>
+        <div class="user-input-container">
+            <textarea class="user-input" @bind="messageInput"></textarea>
+            <div class="button-wrapper d-flex p-2 my-2">
+                <button class="send-button btn btn-secondary" @onclick="Send" disabled="@(!IsConnected)">Send</button>
 
-        </textarea>
+            </div>
+
+        </div>
     </div>
-    <button @onclick="Send" disabled="@(!IsConnected)">Send</button>
 </div>
 
 
