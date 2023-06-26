@@ -5,43 +5,45 @@
 
 <PageTitle>Debug Output</PageTitle>
 
-<div class="chat-container d-flex flex-column">
-    <div class="chat mt-auto">
+<div class="chat-container">
+    <div class="chat-me">
 
         <div class="list-group" id="messagesList">
             @foreach (var message in messages)
             {
-                <div class="list-inline-item">@message</div>
+                <div style="color: @message.Value" class="list-inline-item">@message.Key</div>
             }
         </div>
-        <div class="user-input-container">
-            <textarea class="user-input" @bind="messageInput"></textarea>
-            <div class="button-wrapper d-flex p-2 my-2">
-                <button class="send-button btn btn-secondary" @onclick="Send" disabled="@(!IsConnected)">Send</button>
 
-            </div>
-
+        <div class="user-input-container  d-flex flex-column">
+            <button class="send-button btn btn-secondary my-3" @onclick="Send" disabled="@(!IsConnected)">Send</button>
+            <input  class="user-input" @bind="messageInput"></input>
+            <input type="color" @bind="userColor"/>
         </div>
+
     </div>
 </div>
 
 
 @code {
     private HubConnection? hubConnection;
-    private List<string> messages = new List<string>();
+    private Dictionary<string, string> messages = new();
     //private string? userInput;
     private string? messageInput;
+    private string? userColor;
+    public ILogger? logger;
 
     protected override async Task OnInitializedAsync()
     {
+        
         hubConnection = new HubConnectionBuilder()
             .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
 
-        hubConnection.On<string>("ReceiveMessage", (message) =>
+        hubConnection.On<string, string>("ReceiveMessage", (message, color) =>
         {
             var encodedMsg = $"{message}";
-            messages.Add(encodedMsg);
+            messages.Add(encodedMsg, color);
             InvokeAsync(StateHasChanged);
         });
 
@@ -52,7 +54,8 @@
     {
         if (hubConnection is not null)
         {
-            await hubConnection.SendAsync("SendMessage", messageInput);
+            await hubConnection.SendAsync("SendMessage", messageInput, userColor);
+            messageInput = "";
         }
     }
 
@@ -67,3 +70,30 @@
         }
     }
 }
+<style>
+    .chat-me {
+        background-color: #77777711;
+        max-width: 30em;
+        min-width: 30em;
+        max-height: 40em;
+        min-height: 40em;
+        padding: 1em;
+        border-radius: 15px;
+        color: @userColor;
+        overflow-y: scroll;
+        position: absolute;
+    }
+    .chat-you {
+        background-color: #77777711;
+        max-width: 30em;
+        min-width: 30em;
+        max-height: 40em;
+        min-height: 40em;
+        padding: 1em;
+        border-radius: 15px;
+        color: @userColor;
+        overflow-y: scroll;
+        position: absolute;
+
+    }
+</style>

@@ -11,9 +11,14 @@ using FamBot.CommandModules;
 using DSharpPlus.SlashCommands;
 using Microsoft.AspNetCore.ResponseCompression;
 using FamBot.Data.Services;
+using Serilog;
+using Serilog.Sinks.SystemConsole;
+using Serilog.Sinks.File;
+using Serilog.Sinks.AspNetCore.SignalR;
+using Serilog.Sinks.AspNetCore.SignalR.Interfaces;
+using Serilog.Sinks.AspNetCore.SignalR.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 var discord = new DiscordClient(new DiscordConfiguration()
@@ -29,6 +34,14 @@ discord.UseInteractivity(new InteractivityConfiguration()
     Timeout = TimeSpan.FromSeconds(60)
 });
 
+Log.Logger = new LoggerConfiguration()
+              .MinimumLevel.Debug()
+              .WriteTo.Console()
+              .WriteTo.SignalRSink<>()
+              .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
+              .CreateLogger();
+
+Log.Information("Logger Initializing: Program.cs");
 
 builder.Services.AddResponseCompression(opts =>
 {

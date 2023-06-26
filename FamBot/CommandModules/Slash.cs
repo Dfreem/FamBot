@@ -12,7 +12,7 @@ namespace FamBot.CommandModules;
 
 public class Slash : ApplicationCommandModule
 {
-    public CalendarService CalService { get; set; }
+    public CalendarService CalService { get; set; } = default!;
 
     [SlashCommand("remind", "add a reminder to Devins calendar")]
     public async Task Remind(InteractionContext context, [Option("Task", "what is the thing that needs done?")] string todo)
