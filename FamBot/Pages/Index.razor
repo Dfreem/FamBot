@@ -1,5 +1,7 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.SignalR.Client
+@using FamBot.Data.Services
+
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
 
@@ -17,8 +19,8 @@
 
         <div class="user-input-container  d-flex flex-column">
             <button class="send-button btn btn-secondary my-3" @onclick="Send" disabled="@(!IsConnected)">Send</button>
-            <input  class="user-input" @bind="messageInput"></input>
-            <input type="color" @bind="userColor"/>
+            <input class="user-input" @bind="messageInput"></input>
+            <input type="color" @bind="userColor" />
         </div>
 
     </div>
@@ -31,11 +33,13 @@
     //private string? userInput;
     private string? messageInput;
     private string? userColor;
-    public ILogger? logger;
+    ILogger? logger;
+    public CalendarService CalService { get; private set; } = new();
+
 
     protected override async Task OnInitializedAsync()
     {
-        
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
@@ -83,6 +87,7 @@
         overflow-y: scroll;
         position: absolute;
     }
+
     .chat-you {
         background-color: #77777711;
         max-width: 30em;
@@ -94,6 +99,5 @@
         color: @userColor;
         overflow-y: scroll;
         position: absolute;
-
     }
 </style>

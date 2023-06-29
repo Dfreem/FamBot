@@ -4,19 +4,17 @@ using DSharpPlus.Interactivity;
 using DSharpPlus;
 using Microsoft.AspNetCore.ResponseCaching;
 using FamBot.Hubs;
+using FamBot;
+using FamBot.Data.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using DSharpPlus.Interactivity.Extensions;
 using FamBot.CommandModules;
 using DSharpPlus.SlashCommands;
 using Microsoft.AspNetCore.ResponseCompression;
-using FamBot.Data.Services;
 using Serilog;
 using Serilog.Sinks.SystemConsole;
-using Serilog.Sinks.File;
-using Serilog.Sinks.AspNetCore.SignalR;
-using Serilog.Sinks.AspNetCore.SignalR.Interfaces;
-using Serilog.Sinks.AspNetCore.SignalR.Extensions;
+using Serilog.Sinks.File;;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -26,18 +24,18 @@ var discord = new DiscordClient(new DiscordConfiguration()
     Token = builder.Configuration["Discord:Token"],
     TokenType = TokenType.Bot,
     Intents = DiscordIntents.All,
-    MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Debug
+    MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Information,
+    HttpTimeout = Timeout.InfiniteTimeSpan
 });
 discord.UseInteractivity(new InteractivityConfiguration()
 {
     PollBehaviour = PollBehaviour.KeepEmojis,
-    Timeout = TimeSpan.FromSeconds(60)
+    Timeout = TimeSpan.FromSeconds(500)
 });
 
 Log.Logger = new LoggerConfiguration()
               .MinimumLevel.Debug()
               .WriteTo.Console()
-              .WriteTo.SignalRSink<>()
               .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
               .CreateLogger();
 
@@ -74,7 +72,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.MapBlazorHub();
 app.MapHub<ChatHub>("/chathub");
 app.MapFallbackToPage("/_Host");

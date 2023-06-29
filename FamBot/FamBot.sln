@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1706.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FamBot", "FamBot.csproj", "{BA71FE50-39F1-432D-BC7A-14EA92379632}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamBot", "FamBot.csproj", "{BA71FE50-39F1-432D-BC7A-14EA92379632}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FamBotTests", "..\FamBotTests\FamBotTests.csproj", "{7BC25795-3ACD-49E8-BFE8-7DBC29398055}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{BA71FE50-39F1-432D-BC7A-14EA92379632}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA71FE50-39F1-432D-BC7A-14EA92379632}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA71FE50-39F1-432D-BC7A-14EA92379632}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BC25795-3ACD-49E8-BFE8-7DBC29398055}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BC25795-3ACD-49E8-BFE8-7DBC29398055}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BC25795-3ACD-49E8-BFE8-7DBC29398055}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BC25795-3ACD-49E8-BFE8-7DBC29398055}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

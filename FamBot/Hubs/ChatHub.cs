@@ -4,11 +4,8 @@ using System;
 
 namespace FamBot.Hubs;
 
-public class ChatHub : Hub
+public class ChatHub : Hub<IChatClient>
 {
-    public async Task SendMessage(string message)
-    {
-        await Clients.All.SendAsync("ReceiveMessage", message);
-    }
-    public void RecieveLogEvent(string[] groups, string[] userIds, Serilog.Sinks.)
+    public async Task SendMessage(string user, string message) =>
+        await Clients.All.RecieveMessage(user, message);
 }
