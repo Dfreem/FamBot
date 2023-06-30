@@ -21,11 +21,12 @@ public class Slash : ApplicationCommandModule
     public IHubContext<ChatHub, IChatClient> ChatContext { get; set; } = default!;
 
     [SlashCommand("todo", "add a todo item to Devins calendar")]
-    public async Task Remind(InteractionContext context,
+    public async Task Remind(
+        InteractionContext context,
         [Option("what", "what is the thing that needs done?")] string todo,
         [Option("when", "today? tomorrow? Thursday?")] DayOfWeek doOn,
         [Option("description", "do you have anymore details?")] string desc = "No description"
-        )
+    )
     {
         string reminder = await CalService.AddTodoAsync(todo, desc, doOn);
         await ChatContext.Clients.All.RecieveMessage(context.Member.ToString(), reminder);
@@ -48,7 +49,7 @@ public class Slash : ApplicationCommandModule
     [SlashCommand("get_all_events", "retrieve all of the events on devins calendar")]
     public async Task GetAllEvents(InteractionContext context)
     {
-        string events = await CalService.GetTodos();
+        string events = await CalService.GetAllTodos();
         var interactivity = context.Client.GetInteractivity();
         var pages = interactivity.GeneratePagesInEmbed(events);
         await context.Channel.SendPaginatedMessageAsync(context.Member, pages);

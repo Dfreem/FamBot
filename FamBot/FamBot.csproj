@@ -28,9 +28,4 @@
     <Folder Include="Data\Services\" />
     <Folder Include="logs\" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="Data\icalexport.ics">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>

@@ -21,4 +21,10 @@
     <ProjectReference Include="..\FamBot\FamBot.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
 </Project>

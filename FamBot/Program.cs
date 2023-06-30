@@ -14,11 +14,13 @@ using DSharpPlus.SlashCommands;
 using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
 using Serilog.Sinks.SystemConsole;
-using Serilog.Sinks.File;;
+using Serilog.Sinks.File;
 
 var builder = WebApplication.CreateBuilder(args);
-// Add services to the container.
 
+#region configure services
+
+#region ----------- Discord Config -----------
 var discord = new DiscordClient(new DiscordConfiguration()
 {
     Token = builder.Configuration["Discord:Token"],
@@ -32,11 +34,12 @@ discord.UseInteractivity(new InteractivityConfiguration()
     PollBehaviour = PollBehaviour.KeepEmojis,
     Timeout = TimeSpan.FromSeconds(500)
 });
+#endregion
 
 Log.Logger = new LoggerConfiguration()
               .MinimumLevel.Debug()
               .WriteTo.Console()
-              .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
+              .WriteTo.File("~/logs/myapp.txt", rollingInterval: RollingInterval.Day)
               .CreateLogger();
 
 Log.Information("Logger Initializing: Program.cs");
@@ -47,9 +50,12 @@ builder.Services.AddResponseCompression(opts =>
         new[] { "application/octet-stream" });
 });
 
-builder.Services.AddTransient<CalendarService>();
+builder.Services.AddSingleton<CalendarService>(new CalendarService());
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+#endregion
+
 
 var app = builder.Build();
 var commands = discord.UseSlashCommands(new SlashCommandsConfiguration()
