@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
 using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.File;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,9 +38,9 @@ discord.UseInteractivity(new InteractivityConfiguration()
 #endregion
 
 Log.Logger = new LoggerConfiguration()
-              .MinimumLevel.Debug()
+              .MinimumLevel.Information()
               .WriteTo.Console()
-              .WriteTo.File("~/logs/myapp.txt", rollingInterval: RollingInterval.Day)
+              .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
               .CreateLogger();
 
 Log.Information("Logger Initializing: Program.cs");
@@ -49,10 +50,10 @@ builder.Services.AddResponseCompression(opts =>
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
-
-builder.Services.AddSingleton<CalendarService>(new CalendarService());
+builder.Services.AddSingleton<CalendarService>(new CalendarService("Data/icalexport.ics"));
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddDirectoryBrowser();
 
 #endregion
 

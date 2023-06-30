@@ -5,19 +5,20 @@ namespace FamBotTests
     public class CalendarTests
     {
         private CalendarService _getCalendar;
+        string fp = "../../../../FamBot/Data/icalexport.ics";
 
         [SetUp]
         public void Setup()
         {
-            Log.Logger = new LoggerConfiguration()
-              .MinimumLevel.Debug()
-              .WriteTo.Console()
-              .WriteTo.File("~/logs/log", rollingInterval: RollingInterval.Day)
-              .CreateLogger();
-            _getCalendar = new("~/Data/icalexport.ics");
-            
-            _getCalendar.AddTodoAsync("test", "test", DayOfWeek.Thursday).Wait();
+            _getCalendar = new(fp);
 
+            _getCalendar.AddTodoAsync("test", "test", DayOfWeek.Thursday).Wait();
+            File.WriteAllText(fp, _getCalendar.ToString());
+        }
+        [TearDown]
+        public void TearDown()
+        {
+            File.Delete(fp);
         }
 
         [Test]

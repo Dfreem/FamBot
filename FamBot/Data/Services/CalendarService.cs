@@ -12,12 +12,22 @@ namespace FamBot.Data.Services;
 public class CalendarService
 {
     public Calendar GetCalendar { get; set; }
+    string _fp;
 
     public CalendarService(string filePath = "Data/icalexport.ics")
     {
-        if (!File.Exists(filePath)) File.CreateText(filePath);
-        GetCalendar = Calendar.Load(File.ReadAllText(filePath)) ?? new Calendar();
-        
+        _fp = filePath;
+        if (File.Exists(filePath))
+        {
+            var calString = File.ReadAllText(filePath);
+            GetCalendar = Calendar.Load(calString) ?? new Calendar();
+            Log.Logger.Information(GetCalendar.ToString()!);
+        }
+        else
+        {
+            GetCalendar = new Calendar();
+            File.WriteAllText( filePath, GetCalendar.ToString());
+        }
     }
 
     /// <summary>
@@ -75,17 +85,12 @@ public class CalendarService
             Description = desc,
             DtStart = dt,
             DtStamp = stamp,
-            RecurrenceRules = new List<RecurrencePattern>
-            {
-                new RecurrencePattern(FrequencyType.None, 1)
-            },
-            Summary = todoName + desc
+            Summary = todoName + desc,
+            
         });
         CalendarSerializer serial = new();
         string serializedCalendar = serial.SerializeToString(GetCalendar);
-        //Log.Logger.Information($"Reminder: {todoName}\n{desc}");
-        //await File.AppendAllTextAsync("Data/icalexport.ics", serializedCalendar);
-        //Log.Logger.Information($"From AddReminderAsync in CalendarService:\n{serializedCalendar}");
+        await File.WriteAllTextAsync(_fp, serializedCalendar);
         return await Task.FromResult(serializedCalendar);
 
     }
