@@ -50,7 +50,7 @@ builder.Services.AddResponseCompression(opts =>
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
-builder.Services.AddSingleton<CalendarService>(new CalendarService("Data/icalexport.ics"));
+//builder.Services.AddSingleton<CalendarService>(new CalendarService("Data/icalexport.ics"));
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddDirectoryBrowser();
@@ -64,7 +64,7 @@ var commands = discord.UseSlashCommands(new SlashCommandsConfiguration()
     Services = app.Services
 });
 
-commands.RegisterCommands<Slash>(1055294750095331439);
+//commands.RegisterCommands<Slash>(1055294750095331439);
 
 await discord.ConnectAsync();
 app.UseResponseCompression();
