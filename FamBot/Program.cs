@@ -1,3 +1,5 @@
+
+#region Usings
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity;
@@ -16,6 +18,8 @@ using Serilog;
 using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.File;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using OpenAI.Extensions;
+#endregion
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +54,18 @@ builder.Services.AddResponseCompression(opts =>
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
+
+builder.Services.AddOpenAIService(options =>
+{
+    options.ApiKey = builder.Configuration["OpenAi:Key"]!;
+    options.Organization = builder.Configuration["OpeniAi:OrgId"];
+});
+
+builder.Configuration.AddKeyPerFile("SeancePrompt.txt");
+
+// Uncomment to use CalendarSlashModule
 //builder.Services.AddSingleton<CalendarService>(new CalendarService("Data/icalexport.ics"));
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddDirectoryBrowser();
@@ -64,7 +79,8 @@ var commands = discord.UseSlashCommands(new SlashCommandsConfiguration()
     Services = app.Services
 });
 
-//commands.RegisterCommands<Slash>(1055294750095331439);
+// Uncomment to use CalendarSlashModule
+//commands.RegisterCommands<CalendarSlashModule>(1055294750095331439);
 
 await discord.ConnectAsync();
 app.UseResponseCompression();

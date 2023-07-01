@@ -10,7 +10,7 @@ using DSharpPlus.Interactivity.Extensions;
 
 namespace FamBot.CommandModules;
 
-public class Reminder : ApplicationCommandModule
+public class CalendarSlashModule : ApplicationCommandModule
 {
     public CalendarService CalService { get; set; } = default!;
     public IHubContext<ChatHub, IChatClient> ChatContext { get; set; } = default!;
