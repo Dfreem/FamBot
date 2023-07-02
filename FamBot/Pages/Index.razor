@@ -1,6 +1,8 @@
 ﻿@page "/"
+@using FamBot.Hubs;
 @using Microsoft.AspNetCore.SignalR.Client
 @using FamBot.Data.Services
+@using Microsoft.AspNetCore.SignalR;
 
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
@@ -34,6 +36,7 @@
     private string? messageInput;
     private string? userColor;
     ILogger? logger;
+    private IHubContext<ChatHub, IChatClient> ChatHubContext { get; set; } = default!;
     public CalendarService CalService { get; private set; } = new();
 
 
@@ -44,10 +47,10 @@
             .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
 
-        hubConnection.On<string, string>("ReceiveMessage", (message, color) =>
+        hubConnection.On<string, string>("RecieveMessage", (messageInput, userColor) =>
         {
-            var encodedMsg = $"{message}";
-            messages.Add(encodedMsg, color);
+            var encodedMsg = $"{messageInput}";
+            messages.Add(encodedMsg, userColor);
             InvokeAsync(StateHasChanged);
         });
 

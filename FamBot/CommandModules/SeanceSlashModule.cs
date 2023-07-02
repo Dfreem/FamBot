@@ -14,16 +14,25 @@ namespace FamBot.CommandModules
     {
         // SignalR Hub
         public IHubContext<ChatHub, IChatClient> ChatContext { get; set; } = default!;
-        
-        
-        
+
+        public AiService AiApi { get; set; } = default!;
+
+        public Serilog.ILogger Logger { get; set; } = default!;
+
         // Discord
         public DiscordClient DClient { get; set; } = default!;
 
-        [SlashCommand("Lets Have a Seance", "Well Becca... Let's have a seance. Call this command to speak with a random deceased historical figure.")]
-        public async Task LetsHaveASeance()
+        [SlashCommand("LetsHaveASeance", "Well Becca... Let's have a seance.")]
+        public async Task LetsHaveASeance(InteractionContext context)
         {
+            await context.DeferAsync();
 
+            var seanceResponse = await AiApi.HaveASeance();
+
+            await context.EditResponseAsync(new DiscordWebhookBuilder()
+            {
+                Content = seanceResponse
+            });
         }
     }
 }

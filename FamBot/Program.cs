@@ -19,13 +19,37 @@ using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.File;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using OpenAI.Extensions;
+using OpenAI.Managers;
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);
 
 #region configure services
 
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
+
+Log.Logger = new LoggerConfiguration()
+              .MinimumLevel.Information()
+              .WriteTo.Console()
+              .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
+              .CreateLogger();
+
+builder.Services.AddSingleton<AiService>(services =>
+{
+    return new AiService(builder.Configuration, services);
+});
+string promptRoot = Path.GetFullPath(Environment.CurrentDirectory);
+
+//builder.Configuration.AddKeyPerFile();
+
 #region ----------- Discord Config -----------
+
 var discord = new DiscordClient(new DiscordConfiguration()
 {
     Token = builder.Configuration["Discord:Token"],
@@ -34,6 +58,7 @@ var discord = new DiscordClient(new DiscordConfiguration()
     MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Information,
     HttpTimeout = Timeout.InfiniteTimeSpan
 });
+
 discord.UseInteractivity(new InteractivityConfiguration()
 {
     PollBehaviour = PollBehaviour.KeepEmojis,
@@ -41,48 +66,26 @@ discord.UseInteractivity(new InteractivityConfiguration()
 });
 #endregion
 
-Log.Logger = new LoggerConfiguration()
-              .MinimumLevel.Information()
-              .WriteTo.Console()
-              .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
-              .CreateLogger();
-
-Log.Information("Logger Initializing: Program.cs");
-
-builder.Services.AddResponseCompression(opts =>
-{
-    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-        new[] { "application/octet-stream" });
-});
-
-builder.Services.AddOpenAIService(options =>
-{
-    options.ApiKey = builder.Configuration["OpenAi:Key"]!;
-    options.Organization = builder.Configuration["OpeniAi:OrgId"];
-});
-
-builder.Configuration.AddKeyPerFile("SeancePrompt.txt");
-
-// Uncomment to use CalendarSlashModule
-//builder.Services.AddSingleton<CalendarService>(new CalendarService("Data/icalexport.ics"));
-
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
-builder.Services.AddDirectoryBrowser();
 
 #endregion
 
 
 var app = builder.Build();
+
+#region register Discord commands
+
 var commands = discord.UseSlashCommands(new SlashCommandsConfiguration()
 {
     Services = app.Services
 });
 
+commands.RegisterCommands<SeanceSlashModule>(1055294750095331439);
+
 // Uncomment to use CalendarSlashModule
 //commands.RegisterCommands<CalendarSlashModule>(1055294750095331439);
 
-await discord.ConnectAsync();
+#endregion
+
 app.UseResponseCompression();
 if (!app.Environment.IsDevelopment())
 {
@@ -99,4 +102,5 @@ app.MapBlazorHub();
 app.MapHub<ChatHub>("/chathub");
 app.MapFallbackToPage("/_Host");
 
+await discord.ConnectAsync();
 app.Run();
