@@ -44,7 +44,6 @@ But tell me, Devin, do you seek justice for this heinous crime? How do you know 
 User: 3.
 
 Conjured Spirit:
-*Adelaide's eyes widen, a mixture of surprise and confusion crossing her ghostly features.*
 
 What? No, no, dear Devin, you misunderstand. I am not the one who committed the murder. I simply stumbled upon the aftermath of the grisly scene. My purpose was to uncover the truth, not perpetrate it.
 
@@ -71,4 +70,6 @@ Please understand, dear Devin, I carried a heavy burden these years. Regret cons
 3. [Inquire about the repercussions Adelaide faced after the murder]
 4. [Express empathy towards Adelaide's situation]
 
+---
+End examples
 ---

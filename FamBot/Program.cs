@@ -5,13 +5,11 @@ using DSharpPlus.Interactivity.Enums;
 using DSharpPlus.Interactivity;
 using DSharpPlus;
 using Microsoft.AspNetCore.ResponseCaching;
-using FamBot.Hubs;
 using FamBot;
 using FamBot.Data.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using DSharpPlus.Interactivity.Extensions;
-using FamBot.CommandModules;
 using DSharpPlus.SlashCommands;
 using Microsoft.AspNetCore.ResponseCompression;
 using Serilog;
@@ -20,6 +18,8 @@ using Serilog.Sinks.File;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using OpenAI.Extensions;
 using OpenAI.Managers;
+using FamBot.CommandModules.SlashCommands;
+using FamBot.SignalR.Hubs;
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);

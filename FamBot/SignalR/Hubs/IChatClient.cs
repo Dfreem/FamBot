@@ -1,4 +1,4 @@
-﻿namespace FamBot.Hubs
+﻿namespace FamBot.SignalR.Hubs
 {
     public interface IChatClient
     {

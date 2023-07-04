@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using FamBot.Hubs;
+@using FamBot.SignalR.Hubs;
 @using Microsoft.AspNetCore.SignalR.Client
 @using FamBot.Data.Services
 @using Microsoft.AspNetCore.SignalR;
@@ -47,7 +47,7 @@
             .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
 
-        hubConnection.On<string, string>("RecieveMessage", (messageInput, userColor) =>
+        hubConnection.On<string, string>("RecieveMessage", (userColor, messageInput) =>
         {
             var encodedMsg = $"{messageInput}";
             messages.Add(encodedMsg, userColor);
@@ -61,7 +61,7 @@
     {
         if (hubConnection is not null)
         {
-            await hubConnection.SendAsync("SendMessage", messageInput, userColor);
+            await hubConnection.SendAsync("SendMessage", userColor, messageInput);
             messageInput = "";
         }
     }

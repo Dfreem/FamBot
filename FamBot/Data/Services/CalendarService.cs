@@ -104,7 +104,6 @@ public class CalendarService
         string serializedCalendar = serial
             .SerializeToString(filteredTodos);
         var calResult = await Task.FromResult(serializedCalendar);
-        Log.Logger.Information($"From GetThisWeek in CalendarService:\n{serializedCalendar}");
         return calResult;
     }
 

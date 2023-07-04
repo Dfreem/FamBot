@@ -43,9 +43,5 @@ public class AiService
         return completionResult.Choices.First().Message.Content;
     }
 
-    #region private helper methods
-
-
-
-    #endregion
+ 
 }

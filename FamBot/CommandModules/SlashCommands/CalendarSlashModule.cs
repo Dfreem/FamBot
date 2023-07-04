@@ -3,12 +3,12 @@ using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using FamBot.Data.Services;
-using FamBot.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Serilog;
 using DSharpPlus.Interactivity.Extensions;
+using FamBot.SignalR.Hubs;
 
-namespace FamBot.CommandModules;
+namespace FamBot.CommandModules.SlashCommands;
 
 public class CalendarSlashModule : ApplicationCommandModule
 {
