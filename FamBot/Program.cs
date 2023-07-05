@@ -18,8 +18,9 @@ using Serilog.Sinks.File;
 using Microsoft.Extensions.Configuration.UserSecrets;
 using OpenAI.Extensions;
 using OpenAI.Managers;
-using FamBot.CommandModules.SlashCommands;
 using FamBot.SignalR.Hubs;
+using FamBot.CommandModules.MessageCommands;
+using DSharpPlus.Entities;
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,10 +41,8 @@ Log.Logger = new LoggerConfiguration()
               .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
               .CreateLogger();
 
-builder.Services.AddSingleton<AiService>(services =>
-{
-    return new AiService(builder.Configuration, services);
-});
+builder.Services.AddTransient(services => new AiService(builder.Configuration));
+
 string promptRoot = Path.GetFullPath(Environment.CurrentDirectory);
 
 //builder.Configuration.AddKeyPerFile();
@@ -74,12 +73,22 @@ var app = builder.Build();
 
 #region register Discord commands
 
-var commands = discord.UseSlashCommands(new SlashCommandsConfiguration()
+var slash = discord.UseSlashCommands(new SlashCommandsConfiguration()
 {
     Services = app.Services
 });
 
-commands.RegisterCommands<SeanceSlashModule>(1055294750095331439);
+var message = discord.UseCommandsNext(new CommandsNextConfiguration()
+{
+    Services = app.Services,
+    StringPrefixes = new[]
+    {
+        "lets have a sceance",
+        DiscordEmoji.FromName(discord, ":woman_genie:"),
+        DiscordEmoji.FromName(discord, ":ghost:")
+    }
+});
+message.RegisterCommands<SeanceCommandModule>();
 
 // Uncomment to use CalendarSlashModule
 //commands.RegisterCommands<CalendarSlashModule>(1055294750095331439);
