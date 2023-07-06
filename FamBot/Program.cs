@@ -21,6 +21,7 @@ using OpenAI.Managers;
 using FamBot.SignalR.Hubs;
 using FamBot.CommandModules.MessageCommands;
 using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
 #endregion
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddTransient(services => new AiService(builder.Configuration, services));
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -41,11 +43,9 @@ Log.Logger = new LoggerConfiguration()
               .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day)
               .CreateLogger();
 
-builder.Services.AddTransient(services => new AiService(builder.Configuration));
-
-string promptRoot = Path.GetFullPath(Environment.CurrentDirectory);
 
 //builder.Configuration.AddKeyPerFile();
+var app = builder.Build();
 
 #region ----------- Discord Config -----------
 
@@ -55,7 +55,7 @@ var discord = new DiscordClient(new DiscordConfiguration()
     TokenType = TokenType.Bot,
     Intents = DiscordIntents.All,
     MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Information,
-    HttpTimeout = Timeout.InfiniteTimeSpan
+    HttpTimeout = Timeout.InfiniteTimeSpan,
 });
 
 discord.UseInteractivity(new InteractivityConfiguration()
@@ -63,13 +63,21 @@ discord.UseInteractivity(new InteractivityConfiguration()
     PollBehaviour = PollBehaviour.KeepEmojis,
     Timeout = TimeSpan.FromSeconds(500)
 });
+discord.ComponentInteractionCreated += Discord_ComponentInteractionCreated;
+
+async Task Discord_ComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs args)
+{
+    await args.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
+    var ai = app.Services.GetRequiredService<AiService>();
+    await ai.RespondToSeanceAsync(sender, args);
+}
+
+#endregion
+
 #endregion
 
 
-#endregion
 
-
-var app = builder.Build();
 
 #region register Discord commands
 

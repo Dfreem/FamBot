@@ -21,7 +21,7 @@
 
         <div class="user-input-container  d-flex flex-column">
             <button class="send-button btn btn-secondary my-3" @onclick="Send" disabled="@(!IsConnected)">Send</button>
-            <input class="user-input" @bind="messageInput"></input>
+            <input class="user-input" @bind="messageInput" />
             <input type="color" @bind="userColor" />
         </div>
 
